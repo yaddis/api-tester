@@ -13,10 +13,10 @@ module.exports = {
 
     delete req.body['back_url']
     
-    req.body.notify_url = "https://yaddi.requestcatcher.com/"
+    req.body.notify_url = "https://rdp-act.up.railway.app/payment_notif"
     if (req.body.api_mode != 'direct_token_api') {
-      req.body.redirect_url = "https://rdp-act.herokuapp.com/token_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
-      req.body.back_url = "https://rdp-act.herokuapp.com/back"
+      req.body.redirect_url = "https://rdp-act.up.railway.app/token_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
+      req.body.back_url = "https://rdp-act.up.railway.app/back"
       if (hostname.includes('localhost')) { 
         req.body.redirect_url = "http://localhost:8000/token_redirect"
       }

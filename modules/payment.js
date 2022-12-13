@@ -12,16 +12,16 @@ module.exports = {
 
     const hostname = req.hostname;
     if(is.not.existy(req.body.notify_url)) {
-      req.body.notify_url = "https://rdp-act.herokuapp.com/payment_notif"
+      req.body.notify_url = "https://rdp-act.up.railway.app/payment_notif"
     }
     if(is.not.existy(req.body.redirect_url)) {
-      req.body.redirect_url = "https://rdp-act.herokuapp.com/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
+      req.body.redirect_url = "https://rdp-act.up.railway.app/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
       if (hostname.includes('localhost')) { 
         req.body.redirect_url = "http://localhost:8000/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
       } 
     }
     if(is.not.existy(req.body.back_url)) {
-      req.body.back_url = "https://rdp-act.herokuapp.com/back"
+      req.body.back_url = "https://rdp-act.up.railway.app/back"
       if (hostname.includes('localhost')) { 
         req.body.back_url = "http://localhost:8000/back"
       } 
@@ -136,10 +136,10 @@ module.exports = {
 
   paymentstring: function (req, api_url) {
     if(is.not.url(req.body.notify_url)) {
-      req.body.back_url = "https://rdp-act.herokuapp.com/notif"
+      req.body.back_url = "https://rdp-act.up.railway.app/notif"
     }
-    req.body.redirect_url = "https://rdp-act.herokuapp.com/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
-    req.body.back_url = "https://rdp-act.herokuapp.com/back"
+    req.body.redirect_url = "https://rdp-act.up.railway.app/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
+    req.body.back_url = "https://rdp-act.up.railway.app/back"
     if (req.body.api_mode == 'direct_n3d' || req.body.api_mode == 'direct_3d') {
       delete req.body['back_url']
       delete req.body['redirect_url']
