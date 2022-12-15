@@ -7,7 +7,8 @@ var slack_var = {
   "client_id":"457701094148.2269189696612",
   "client_secret": "81a7f3efd80471ec837aa887c6ea81ca",
   "signing_secret": "69d094a1143ba6249fe87080ea62ba08",
-  "verification_token":"d599b9Q3uTQU6ty7SDT3Vv54"
+  "verification_token":"d599b9Q3uTQU6ty7SDT3Vv54",
+  "webhook":"https://hooks.slack.com/services/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"
 }
 
 module.exports = {
@@ -138,7 +139,7 @@ module.exports = {
     }
   
     request_option  = {
-      url: "https://hooks.slack.com/services/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",
+      url: slack_var.webhook,      
       method: 'POST',
       json: message
     }
@@ -186,7 +187,7 @@ module.exports = {
       ]
     };
     request_option  = {
-      url: "https://hooks.slack.com/services/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",
+      url: slack_var.webhook,
       method: 'POST',
       json: message
     }
@@ -206,7 +207,7 @@ module.exports = {
   integration_webhook: function(params) {
 
     request_option  = {
-      url: "https://hooks.slack.com/services/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",
+      url: slack_var.webhook,
       method: 'POST',
       form: {payload: '{"text":'+JSON.stringify(JSON.stringify(params), "\n", "\t")+'}'}
     }
