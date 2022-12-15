@@ -61,6 +61,9 @@ app.post('/payment', function (req, res) {
       var result = await payment.processing(req, api_url);
       console.log(result)
       // slack.webhook_paymenturl(result)
+      if(req.body.api_mode == 'direct_n3d') {
+        slack.integration_webhook({"request":req.body, "response":result})
+      }
       res.send(result)
     } catch (error) {
       console.log(error)
