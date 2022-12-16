@@ -8,7 +8,7 @@ var slack_var = {
   "client_secret": "81a7f3efd80471ec837aa887c6ea81ca",
   "signing_secret": "69d094a1143ba6249fe87080ea62ba08",
   "verification_token":"d599b9Q3uTQU6ty7SDT3Vv54",
-  "webhook":"https://hooks.slack.com/services/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"
+  "webhook":"https://hooks.slack.com/services/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"
 }
 
 module.exports = {
