@@ -265,7 +265,7 @@ app.post('/merchant', function(req, res, next) {
       if (err) {
         return console.error('upload failed:', err);
       }
-      // slack.integration_webhook({"request":req.body, "response":JSON.parse(body)})
+      slack.merchantApi_notif({"request":req.body, "response":JSON.parse(body)})
       // should be redirect the app.get('/redirected', ...)
       res.send({"request":req.body, "response":JSON.parse(body)})
     }
@@ -367,8 +367,8 @@ app.post('/hash', function(req,res) {
 })
 
 app.get('/back', function (req, res) {
-  var payment = require('./modules/payment')
-  payment.redirect(req, res, api_url);
+  // var payment = require('./modules/payment')
+  // payment.redirect(req, res, api_url);
   res.send('back')
 })
 

@@ -168,7 +168,56 @@ module.exports = {
           "type": "header",
           "text": {
           "type": "plain_text",
-          "text": "Notification Response "+api_response["order_id"],
+          "text": "RDP - ACT (API Client Tester) Notification Response "+api_response["order_id"],
+          "emoji": true
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+          "type": "mrkdwn",
+          "text": "```"+JSON.stringify(api_response, "\n", "\t")+"```"
+        },
+          "accessory": {
+          "type": "image",
+          "image_url": icon,
+          "alt_text": "cute cat"
+          }
+        }
+      ]
+    };
+    request_option  = {
+      url: slack_var.webhook,
+      method: 'POST',
+      json: message
+    }
+
+    return new Promise((resolve, reject) => {
+      reqprom(request_option)
+      .then(()=>{
+        resolve()
+      })
+      .catch((error) => {
+        reject(error)
+      })
+    })
+
+  },
+
+  merchantApi_notif: function(api_response) {
+
+    if(api_response.response.result_status == 'accepted') {
+      var icon = "https://cdn-icons-png.flaticon.com/512/3281/3281313.png"
+    } else {
+      var icon = "https://cdn-icons-png.flaticon.com/512/391/391116.png"
+    }
+    var message = {
+      "blocks": [
+        {
+          "type": "header",
+          "text": {
+          "type": "plain_text",
+          "text": "RDP - ACT (API Client Tester) Notification Response "+api_response.request.action_type,
           "emoji": true
           }
         },

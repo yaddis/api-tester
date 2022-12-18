@@ -67,7 +67,7 @@ module.exports = {
 
     if(full_stop) {
       message = "Missing parameter: "+full_stop_reason.join(", ");
-      return {"request": req.body, "response": message}
+      return {"response": message, "request": req.body}
       exit;
     }
 
@@ -90,7 +90,7 @@ module.exports = {
       reqprom(request_option)
         .then((api_response) => {
           // gc_logger.payment_url(api_response);
-          resolve({"request":helper.ksort(req.body), "response":api_response})
+          resolve({"response":api_response, "request":helper.ksort(req.body)})
         })
         .catch((error) => {
           reject(error)

@@ -10,7 +10,7 @@ module.exports = {
 
   randomOrderId: function (param) {
     if (is.not.existy(param.recurring_mod)) {
-      return 'RDP' + this.randomString2(3)
+      return 'GST' + this.randomString('timestamp')
     }
     else {
       return 'RECURR' + this.randomString2(3)
@@ -20,7 +20,8 @@ module.exports = {
   randomString: function (type) {
     switch (type) {
       case 'timestamp':
-        return moment().valueOf().toString();
+        // return moment().valueOf().toString();
+        return moment().format('MMDD_HHmmss')
         break;
       default:
         return 'RDP' + this.randomString2(4)
@@ -47,7 +48,7 @@ module.exports = {
 
     min = 1;
     max = '0';
-    decimalDigit = 2;
+    decimalDigit = 3;
     x = max.length
     if (currency == 'IDR') {
       min = 5000
@@ -58,6 +59,7 @@ module.exports = {
     if (currency == 'JPY') {
       floatingDigit = false
     }
+    // console.log("max", max)
 
     while (decimalDigit >= x) {
       max = max + 9;
@@ -65,6 +67,7 @@ module.exports = {
     }
     
     max = parseInt(max)
+    console.log("max", max)
 
     decimal = this.getRandomInt(min, max)
     floating = 0;
