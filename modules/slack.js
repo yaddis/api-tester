@@ -282,5 +282,48 @@ module.exports = {
     //     console.log('test',{payload: '{"text":"'+JSON.stringify(JSON.stringify(params))+'"}'})
     //   }
     // );
+  },
+
+  webhook_slack: function(params) {
+
+    var message = {
+      "blocks": [
+        {
+          "type": "header",
+          "text": {
+          "type": "plain_text",
+          "text": params.title,
+          "emoji": true
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+          "type": "mrkdwn",
+          "text": "```"+JSON.stringify(params.paylooad, "\n", "\t")+"```"
+        },
+          "accessory": {
+          "type": "image",
+          "image_url": params.icon,
+          "alt_text": "cute cat"
+          }
+        }
+      ]
+    };
+    request_option  = {
+      url: slack_var.webhook,
+      method: 'POST',
+      json: message
+    }
+
+    return new Promise((resolve, reject) => {
+      reqprom(request_option)
+      .then(()=>{
+        resolve()
+      })
+      .catch((error) => {
+        reject(error)
+      })
+    })
   }
 }
