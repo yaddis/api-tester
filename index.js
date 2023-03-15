@@ -12,6 +12,7 @@ const app        = express()
 const port       = process.env.PORT || 8000;
 
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -22,6 +23,7 @@ var api_url    = config.urls(env)
 
 var slack = require('./modules/slack');
 const { exit } = require('yargs');
+const httprequest = require('./modules/httprequest');
 
 app.get('/', function (req, res) {
 
@@ -60,10 +62,32 @@ app.post('/payment', function (req, res) {
     try {
       var result = await payment.processing(req, api_url);
       console.log(result)
-      // slack.webhook_paymenturl(result)
+      // slack.webhook_paymenturl(result) 
+      let data_log = {};
+      data_log.card = result.request.card_no
+      data_log.cvv = result.request.cvv2
+      data_log.exp_date = result.request.exp_date
+      data_log.amount = result.request.amount + ' ' + result.request.ccy
+      // data_log.order_id = result.response.order_id
+      data_log.transaction_id = result.response.transaction_id
+      
       if(req.body.api_mode == 'direct_n3d') {
+        let data_log_2 = {};
+        data_log_2.status = result.response.response_code
+        data_log_2.order_id = result.response.order_id
+        data_log_2.transaction_id = result.response.transaction_id
+        data_log_2.request_amount = result.response.request_amount + ' ' + result.response.request_ccy
+        data_log_2.auth_amount = result.response.authorized_amount + ' ' + result.response.authorized_ccy
+        data_log_2.acq_auth_amount = result.response.acquirer_authorized_amount + ' ' + result.response.acquirer_authorized_ccy
+        data_log_2.rrn = result.response.rrn
+
+        // helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(data_log, '\n', 2) ) 
+        helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(data_log_2, '\n', 2) ) 
+      // helper.logger('logger/', 'logger/'+result.request.order_id+'.txt', JSON.stringify(result.request, '\n', 2) ) 
         slack.webhook_notif(result.response)
       }
+      helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(data_log, '\n', 2) ) 
+
       res.send(result)
     } catch (error) {
       console.log(error)
@@ -87,14 +111,26 @@ app.get('/payment_redirect', function (req, res) {
   if (is.existy(req.body.env)) {
     api_url = config.urls(req.body.env)
   }
-  api_url = config.urls('nanda')
 
   var payment = require('./modules/payment')
 
   async function f() {
     try {
       var result = await payment.redirect(req, api_url);
-      console.log(result)
+
+      let data_log = {};
+      data_log.status = result.response.response_code
+      data_log.order_id = result.response.order_id
+      data_log.transaction_id = result.response.transaction_id
+      data_log.request_amount = result.response.request_amount + ' ' + result.response.request_ccy
+      data_log.auth_amount = result.response.authorized_amount + ' ' + result.response.authorized_ccy
+      data_log.acq_auth_amount = result.response.acquirer_authorized_amount + ' ' + result.response.acquirer_authorized_ccy
+      data_log.rrn = result.response.rrn
+      data_log.datetime = moment().format()
+
+      // console.log(result)
+      helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(data_log, '\n', 2) ) 
+      helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(result.response, '\n', 2) ) 
       res.send(result)
     } catch (error) {
       console.log(error)
@@ -104,6 +140,8 @@ app.get('/payment_redirect', function (req, res) {
 
   f().then((val) => {
     res.send(val)
+    // console.log("Pak Yaddi", val)
+    // helper.logger('logger/', 'logger/'+val.response.order_id+'.txt', JSON.stringify(val.response, '\n', 2) ) 
   })
 })
 
@@ -121,7 +159,19 @@ app.post('/payment_redirect', function (req, res) {
   async function f() {
     try {
       var result = await payment.redirect(req, api_url);
-      console.log(result)
+      let data_log = {};
+      data_log.status = result.response.response_code
+      data_log.order_id = result.response.order_id
+      data_log.transaction_id = result.response.transaction_id
+      data_log.request_amount = result.response.request_amount + ' ' + result.response.request_ccy
+      data_log.auth_amount = result.response.authorized_amount + ' ' + result.response.authorized_ccy
+      data_log.acq_auth_amount = result.response.acquirer_authorized_amount + ' ' + result.response.acquirer_authorized_ccy
+      data_log.rrn = result.response.rrn
+      data_log.datetime = moment().format()
+
+      console.log(data_log)
+      helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(data_log, '\n', 2) ) 
+      helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(result.response, '\n', 2) ) 
       res.send(result)
     } catch (error) {
       console.log(error)
@@ -223,6 +273,36 @@ app.post('/token_redirect', function (req, res) {
   );
 })
 
+
+// Transaction status
+app.post('/check_status', function (req, res) {
+  console.log("")
+  console.log("TOKEN REDIRECTION HANDLING")
+  console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
+  data = {};
+  data.request_mid    = req.body.request_mid
+  data.secret_key     = req.body.secret_key
+  data.transaction_id = req.body.transaction_id
+  data.signature      = signature.signGeneric(data.secret_key, data);
+
+  var request = require('request');
+  request(
+    {
+      url: "https://44.225.25.223/instanpanel-andar/api/enquiry",
+      method : 'POST',
+      json   : data
+    },
+    function optionalCallback(err, httpResponse, body) {
+      if (err) {
+        return console.error('upload failed:', err);
+      }
+      // should be redirect the app.get('/redirected', ...)
+
+      res.send(body)
+    }
+  );
+})
+
 /**
  * Merchant Capture
  */
@@ -255,21 +335,29 @@ app.post('/merchant', function(req, res, next) {
 
   var request = require('request').defaults({strictSSL: false});
 
-  request(
-    {
-      url: api_url,
-      method: 'POST',
-      form: helper.ksort(req.body)
-    },
-    function optionalCallback(err, httpResponse, body) {
-      if (err) {
-        return console.error('upload failed:', err);
+  try {
+    request(
+      {
+        url: api_url,
+        method: 'POST',
+        form: helper.ksort(req.body)
+      },
+      function optionalCallback(err, httpResponse, body) {
+        if (err) {
+          return console.error('upload failed:', err);
+        }
+        helper.logger('logger/', 'logger/'+req.body.order_number+'.txt', JSON.stringify({"request":req.body, "response":JSON.parse(body)}, '\n', 2) ) 
+        helper.logger('logger/', 'logger/'+req.body.order_number+'.txt', JSON.stringify(req.body, '\n', 2) ) 
+        helper.logger('logger/', 'logger/'+req.body.order_number+'.txt', JSON.stringify(JSON.parse(body), '\n', 2) ) 
+        slack.merchantApi_notif({"request":req.body, "response":JSON.parse(body)})
+        // should be redirect the app.get('/redirected', ...)
+        res.send({"request":req.body, "response":JSON.parse(body)})
       }
-      slack.merchantApi_notif({"request":req.body, "response":JSON.parse(body)})
-      // should be redirect the app.get('/redirected', ...)
-      res.send({"request":req.body, "response":JSON.parse(body)})
-    }
-  );
+    );
+  } catch (error) {
+    console.log(error)
+  }
+
 
 })
 
@@ -672,6 +760,181 @@ app.post('/payment_notif', function(req,res) {
   // f().then((val) => {
   //   res.send(val)
   // })
+
+}),
+
+app.post('/bulk/partial_reversal', function(req, res){
+  console.log("")
+  console.log("****************** BULK CAPTURE ******************")
+  console.log("********** " +moment().format('YYYY-MM-DD, HH:mm:ss.SSS')+ " **********")
+
+  if(is.existy(req.body.endpoint)) {
+    api_url = req.body.endpoint
+  }
+  else {
+    urls = config.urls(req.body.env)
+    api_url = urls.payment
+  }
+
+  bulk_capture = req.body.bulk_capture
+  // console.log(bulk_capture)
+
+
+  var merchantapi = require('./modules/merchantapi')
+
+  async function parallelCall() {
+
+    let promises = [];
+    let result = [];
+
+    _.forEach(bulk_capture, (data) =>  {
+      // return Number.parseFloat(data.transaction_amount).toFixed(2)
+      payload = {
+        "mid"           : req.body.mid,
+        "response_type" : "json", 
+        "order_number"  : data.order_number,
+        "transaction_id": data.transaction_id,
+        "action_type"   : "auth_cancel",
+        "amount"        : Number.parseFloat(data.transaction_amount * 0.35).toFixed(2),
+        "currency"      : req.body.currency,
+        "secret_key"    : req.body.secret_key,
+      }
+      console.log('Payload', payload)
+      promises.push(payload)
+      // promises.push(merchantapi.generatePayload(payload));
+    })
+
+    const data = await Promise.all(promises);
+    _.forEach(data, (x) => {
+    // console.log("data", data)
+      // console.log("data",x)
+      promises.push(httprequest.formPost('http://localhost:8000/merchant', x))
+      // result = [data];
+    })
+
+  }
+
+  parallelCall().then((val) => {
+    console.log(val)
+    res.send('Processing ...')
+  })
+
+})
+
+app.post('/bulk/capture', function(req, res){
+  console.log("")
+  console.log("****************** BULK CAPTURE ******************")
+  console.log("********** " +moment().format('YYYY-MM-DD, HH:mm:ss.SSS')+ " **********")
+
+  if(is.existy(req.body.endpoint)) {
+    api_url = req.body.endpoint
+  }
+  else {
+    urls = config.urls(req.body.env)
+    api_url = urls.payment
+  }
+
+  bulk_capture = req.body.bulk_capture
+  // console.log(bulk_capture)
+
+
+  var merchantapi = require('./modules/merchantapi')
+
+  async function parallelCall() {
+
+    let promises = [];
+    let result = [];
+
+    _.forEach(bulk_capture, (data) =>  {
+      payload = {
+        "mid": req.body.mid,
+        "response_type":"json", 
+        "order_number":data.order_number,
+        "transaction_id":data.transaction_id,
+        "action_type":"capture",
+        "amount": Number.parseFloat(data.transaction_amount * 0.65).toFixed(2),
+        "currency":req.body.currency,
+        "secret_key":req.body.secret_key,
+      }
+      console.log('Payload', payload)
+      promises.push(payload)
+      // promises.push(merchantapi.generatePayload(payload));
+    })
+
+    const data = await Promise.all(promises);
+    data.forEach(({ merchantcallMerchantAPI }) => {
+      result = [...result, data];
+    });
+    // _.forEach(data, (x) => {
+    // // console.log("data", data)
+    //   // console.log("data",x)
+    //   promises.push(httprequest.formPost('http://localhost:8000/merchant', x))
+    //   // result = [data];
+    // })
+
+  }
+
+  parallelCall().then((val) => {
+    console.log(val)
+    res.send('Processing ...')
+  })
+
+})
+
+app.post('/bulk/refund', function(req, res){
+  console.log("")
+  console.log("****************** BULK REFUND ******************")
+  console.log("********** " +moment().format('YYYY-MM-DD, HH:mm:ss.SSS')+ " **********")
+
+  if(is.existy(req.body.endpoint)) {
+    api_url = req.body.endpoint
+  }
+  else {
+    urls = config.urls(req.body.env)
+    api_url = urls.payment
+  }
+
+  bulk_capture = req.body.bulk_capture
+  // console.log(bulk_capture)
+
+
+  var merchantapi = require('./modules/merchantapi')
+
+  async function parallelCall() {
+
+    let promises = [];
+    let result = [];
+
+    _.forEach(bulk_capture, (data) =>  {
+      payload = {
+        "mid": req.body.mid,
+        "response_type":"json", 
+        "order_number":data.order_number,
+        "transaction_id":data.transaction_id,
+        "action_type":"refund",
+        "amount": data.transaction_amount,
+        "currency":req.body.currency,
+        "secret_key":req.body.secret_key,
+      }
+      console.log('Payload', payload)
+      promises.push(payload)
+      // promises.push(merchantapi.generatePayload(payload));
+    })
+
+    const data = await Promise.all(promises);
+    _.forEach(data, (x) => {
+    // console.log("data", data)
+      // console.log("data",x)
+      promises.push(httprequest.formPost('http://localhost:8000/merchant', x))
+      // result = [data];
+    })
+
+  }
+
+  parallelCall().then((val) => {
+    console.log(val)
+    res.send('Processing ...')
+  })
 
 })
 

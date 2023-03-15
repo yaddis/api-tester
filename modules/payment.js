@@ -8,6 +8,96 @@ const { exit }    = require('yargs');
 
 module.exports = {
 
+  direct_processing: function (payload, api_url) {
+
+    const hostname = 'http://localhost';
+    if(is.not.existy(payload.notify_url)) {
+      payload.notify_url = "https://rdp-act.up.railway.app/payment_notif"
+    }
+    if(is.not.existy(payload.redirect_url)) {
+      payload.redirect_url = "https://rdp-act.up.railway.app/payment_redirect?request_mid=" + payload.mid + "&secret_key=" + payload.secret_key + "&env="+ payload.env
+      // if (hostname.includes('localhost')) { 
+      //   payload.redirect_url = "http://localhost:8000/payment_redirect?request_mid=" + payload.mid + "&secret_key=" + payload.secret_key
+      // } 
+    }
+    if(is.not.existy(payload.back_url)) {
+      payload.back_url = "https://rdp-act.up.railway.app/back"
+      if (hostname.includes('localhost')) { 
+        payload.back_url = "http://localhost:8000/back"
+      } 
+    }
+    if (payload.api_mode == 'direct_n3d' || payload.api_mode == 'direct_3d') {
+      delete payload['back_url']
+      delete payload['redirect_url']
+    }
+
+    if(is.existy(payload.card)){
+      card = JSON.parse(payload.card)
+      payload.card_no = card.card_no
+      payload.cvv2 = card.cvv
+      payload.exp_date = card.exp_month + card.exp_year
+    }
+
+    full_stop = false;
+    full_stop_reason = [];
+    if(is.not.existy(payload.payer_id)) {
+      if (payload.api_mode == 'redirection_sop' || payload.api_mode == 'direct_n3d' || payload.api_mode == 'direct_3d' ) {
+        // if (is.not.existy(payload.cvv2)) {
+        //   full_stop = true;
+        //   full_stop_reason.push("cvv2")
+        // }
+        if (is.not.existy(payload.card_no)) {
+          full_stop = true;
+          full_stop_reason.push("card_no")
+        }
+        // if (is.not.existy(payload.exp_date)) {
+        //   full_stop = true;
+        //   full_stop_reason.push("exp_date")
+        // }
+      }
+    }
+
+    if(is.not.existy(payload.order_id)) {
+      payload.order_id = helper.randomOrderId(payload)
+    }
+    
+    if(is.not.existy(payload.amount)) {
+      payload.amount = helper.randomNumber(payload.ccy)
+    }
+
+    if(full_stop) {
+      message = "Missing parameter: "+full_stop_reason.join(", ");
+      return {"response": message, "request": payload}
+      exit;
+    }
+
+    console.log(payload)
+
+    payload.signature = signature.paymentSignature(payload)
+    delete payload['secret_key']
+    delete payload['env']
+    delete payload['endpoint']
+    delete payload['card']
+    
+    request_option = {
+      url: api_url,
+      method: 'POST',
+      json: payload
+    }
+
+    // gc_logger.request_payment(payload);
+    return new Promise((resolve, reject)=> {
+      reqprom(request_option)
+        .then((api_response) => {
+          // gc_logger.payment_url(api_response);
+          resolve({"response":api_response, "request":helper.ksort(payload)})
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
   processing: function (req, api_url) {
 
     const hostname = req.hostname;
@@ -17,7 +107,7 @@ module.exports = {
     if(is.not.existy(req.body.redirect_url)) {
       req.body.redirect_url = "https://rdp-act.up.railway.app/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
       if (hostname.includes('localhost')) { 
-        req.body.redirect_url = "http://localhost:8000/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
+        req.body.redirect_url = "http://localhost:8000/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key + "&env="+ req.body.env
       } 
     }
     if(is.not.existy(req.body.back_url)) {

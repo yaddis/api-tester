@@ -1,5 +1,7 @@
 var request = require('request');
+var querystring = require('querystring');
 const is = require('is_js')
+const _          = require('underscore')
 
 module.exports = {
 
@@ -14,8 +16,7 @@ module.exports = {
         return console.error('upload failed:', err);
       }
       return body
-    }
-    );
+    });
   },
 
   json: function (data, api_url) {
@@ -40,5 +41,23 @@ module.exports = {
     })
 
 
-  }
+  },
+
+  formPost: function (api_url, data) {
+    request({
+      url: api_url,
+      method: 'POST',
+      form: data,
+
+    },
+    function optionalCallback(err, httpResponse, body) {
+      // console.log(postData)
+      console.log(body)
+      if (err) {
+        console.log(err)
+        return console.error('upload failed:', err);
+      }
+      return body
+    });
+  },
 }

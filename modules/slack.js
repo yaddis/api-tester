@@ -217,7 +217,7 @@ module.exports = {
           "type": "header",
           "text": {
           "type": "plain_text",
-          "text": "RDP - ACT (API Client Tester) Notification Response "+api_response.request.action_type,
+          "text": "RDP - ACT (API Client Tester) Response "+api_response.request.action_type,
           "emoji": true
           }
         },
@@ -271,17 +271,6 @@ module.exports = {
       })
     })
 
-    // request(
-    //   {
-    //     url: "https://hooks.slack.com/services/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",
-    //     method: 'POST',
-    //     json:true,
-    //     form: {payload: '{"text":'+JSON.stringify(JSON.stringify(params))+'}'}
-    //   },
-    //   function(err,httpResponse,body){
-    //     console.log('test',{payload: '{"text":"'+JSON.stringify(JSON.stringify(params))+'"}'})
-    //   }
-    // );
   },
 
   webhook_slack: function(params) {

@@ -1,6 +1,7 @@
-let moment = require('moment');
+let moment = require('moment-timezone');
 let is     = require('is_js');
 let _      = require('underscore')
+const fs = require("fs");
 // var MongoClient = require('mongodb').MongoClient;
 
 // yaddi:m5Vq4OtQKZ4n60G7
@@ -8,12 +9,42 @@ let _      = require('underscore')
 
 module.exports = {
 
+  logger: function (log_dir, filename, data){
+
+    data = moment().format() +" -> "+ data + "\n"
+    if (!fs.existsSync(log_dir)){
+      fs.mkdirSync(log_dir);
+    }
+
+    try {
+      if (fs.existsSync(filename)) {
+        fs.appendFile(filename, data, function (err) {
+          if (err) return console.log(err);
+          // console.log(err);
+        });
+      } else {
+        fs.writeFile(filename, data, function (err) {
+          if (err) {
+            // console.log(err);
+            return err
+          }
+          else {
+            // console.log("write data to log file");
+          }
+        });
+      }
+    } catch (err) {
+      console.error("Error", err);
+    }
+  },
+
   randomOrderId: function (param) {
     if (is.not.existy(param.recurring_mod)) {
-      return 'GST' + this.randomString('timestamp')
+      return param.ccy+'_'+this.randomString()
+      // return 'GST' + this.randomString('timestamp')
     }
     else {
-      return 'RECURR' + this.randomString2(3)
+      return 'RECURR' + this.randomString2(4)
     }
   },
 
@@ -21,12 +52,25 @@ module.exports = {
     switch (type) {
       case 'timestamp':
         // return moment().valueOf().toString();
-        return moment().format('MMDD_HHmmss')
+        currentTime = moment().tz('Asia/Singapore')
+        return currentTime.format('MMDD_HHmmss')
         break;
       default:
-        return 'RDP' + this.randomString2(4)
+        return this.randomString2(4)
         break;
     }
+  },
+
+  saleOrAuth: function() {
+    const characters ='AS';
+
+    let result = '';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < 1; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
   },
 
   randomString2: function(length) {
@@ -123,5 +167,20 @@ module.exports = {
       }
       client.close();
     })();
+  },
+
+  currency_minor_unit: function(currency){
+    ccy = {
+      "JPY":0,
+      "CHF":2,
+      "EUR":2,
+      "HKD":2,
+      "KWD":3,
+      "SGD":2,
+      "USD":2
+    }
+
+    return ccy[currency]
   }
+  
 };
