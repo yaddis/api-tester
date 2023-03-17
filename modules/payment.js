@@ -105,7 +105,7 @@ module.exports = {
       req.body.notify_url = "https://rdp-act.up.railway.app/payment_notif"
     }
     if(is.not.existy(req.body.redirect_url)) {
-      req.body.redirect_url = "https://rdp-act.up.railway.app/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
+      req.body.redirect_url = "https://rdp-act.up.railway.app/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key +"&env="+req.body.env
       if (hostname.includes('localhost')) { 
         req.body.redirect_url = "http://localhost:8000/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key + "&env="+ req.body.env
       } 
