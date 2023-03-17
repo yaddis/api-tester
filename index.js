@@ -88,12 +88,12 @@ app.get('/payment_redirect', function (req, res) {
 
   if (is.existy(req.body.env)) {
     api_url = config.urls(req.body.env)
+  } else {
+    api_url = config.urls('test')
   }
-  console.log(api_url)
 
   var payment = require('./modules/payment')
 
-  console.log(req.body)
   async function f() {
     try {
       var result = await payment.redirect(req, api_url);
@@ -118,6 +118,8 @@ app.post('/payment_redirect', function (req, res) {
 
   if (is.existy(req.body.env)) {
     api_url = config.urls(req.body.env)
+  } else {
+    api_url = config.urls('test')
   }
 
   var payment = require('./modules/payment')
