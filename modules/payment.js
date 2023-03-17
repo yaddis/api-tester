@@ -228,7 +228,7 @@ module.exports = {
     if(is.not.url(req.body.notify_url)) {
       req.body.back_url = "https://rdp-act.up.railway.app/notif"
     }
-    req.body.redirect_url = "https://rdp-act.up.railway.app/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
+    req.body.redirect_url = "https://rdp-act.up.railway.app/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key +"&env="+req.body.env
     req.body.back_url = "https://rdp-act.up.railway.app/back"
     if (req.body.api_mode == 'direct_n3d' || req.body.api_mode == 'direct_3d') {
       delete req.body['back_url']

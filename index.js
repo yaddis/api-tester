@@ -63,31 +63,9 @@ app.post('/payment', function (req, res) {
       var result = await payment.processing(req, api_url);
       console.log(result)
       // slack.webhook_paymenturl(result) 
-      let data_log = {};
-      data_log.card = result.request.card_no
-      data_log.cvv = result.request.cvv2
-      data_log.exp_date = result.request.exp_date
-      data_log.amount = result.request.amount + ' ' + result.request.ccy
-      // data_log.order_id = result.response.order_id
-      data_log.transaction_id = result.response.transaction_id
-      
       if(req.body.api_mode == 'direct_n3d') {
-        let data_log_2 = {};
-        data_log_2.status = result.response.response_code
-        data_log_2.order_id = result.response.order_id
-        data_log_2.transaction_id = result.response.transaction_id
-        data_log_2.request_amount = result.response.request_amount + ' ' + result.response.request_ccy
-        data_log_2.auth_amount = result.response.authorized_amount + ' ' + result.response.authorized_ccy
-        data_log_2.acq_auth_amount = result.response.acquirer_authorized_amount + ' ' + result.response.acquirer_authorized_ccy
-        data_log_2.rrn = result.response.rrn
-
-        // helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(data_log, '\n', 2) ) 
-        helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(data_log_2, '\n', 2) ) 
-      // helper.logger('logger/', 'logger/'+result.request.order_id+'.txt', JSON.stringify(result.request, '\n', 2) ) 
         slack.webhook_notif(result.response)
       }
-      helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(data_log, '\n', 2) ) 
-
       res.send(result)
     } catch (error) {
       console.log(error)
@@ -115,23 +93,10 @@ app.get('/payment_redirect', function (req, res) {
 
   var payment = require('./modules/payment')
 
+  console.log(req.body)
   async function f() {
     try {
       var result = await payment.redirect(req, api_url);
-
-      let data_log = {};
-      data_log.status = result.response.response_code
-      data_log.order_id = result.response.order_id
-      data_log.transaction_id = result.response.transaction_id
-      data_log.request_amount = result.response.request_amount + ' ' + result.response.request_ccy
-      data_log.auth_amount = result.response.authorized_amount + ' ' + result.response.authorized_ccy
-      data_log.acq_auth_amount = result.response.acquirer_authorized_amount + ' ' + result.response.acquirer_authorized_ccy
-      data_log.rrn = result.response.rrn
-      data_log.datetime = moment().format()
-
-      // console.log(result)
-      helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(data_log, '\n', 2) ) 
-      helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(result.response, '\n', 2) ) 
       res.send(result)
     } catch (error) {
       console.log(error)
@@ -160,19 +125,6 @@ app.post('/payment_redirect', function (req, res) {
   async function f() {
     try {
       var result = await payment.redirect(req, api_url);
-      let data_log = {};
-      data_log.status = result.response.response_code
-      data_log.order_id = result.response.order_id
-      data_log.transaction_id = result.response.transaction_id
-      data_log.request_amount = result.response.request_amount + ' ' + result.response.request_ccy
-      data_log.auth_amount = result.response.authorized_amount + ' ' + result.response.authorized_ccy
-      data_log.acq_auth_amount = result.response.acquirer_authorized_amount + ' ' + result.response.acquirer_authorized_ccy
-      data_log.rrn = result.response.rrn
-      data_log.datetime = moment().format()
-
-      console.log(data_log)
-      helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(data_log, '\n', 2) ) 
-      helper.logger('logger/', 'logger/'+result.response.order_id+'.txt', JSON.stringify(result.response, '\n', 2) ) 
       res.send(result)
     } catch (error) {
       console.log(error)
