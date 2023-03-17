@@ -111,6 +111,7 @@ app.get('/payment_redirect', function (req, res) {
   if (is.existy(req.body.env)) {
     api_url = config.urls(req.body.env)
   }
+  console.log(api_url)
 
   var payment = require('./modules/payment')
 
@@ -288,7 +289,7 @@ app.post('/check_status', function (req, res) {
   var request = require('request');
   request(
     {
-      url: "https://44.225.25.223/instanpanel-andar/api/enquiry",
+      url: "https://connect.reddotpayment.com/instanpanel/api/enquiry",
       method : 'POST',
       json   : data
     },

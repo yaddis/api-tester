@@ -244,7 +244,7 @@ module.exports = {
         "HKD":{"CurrencyCode":"344","Value":0.1618154},
         "JPY":{"CurrencyCode":"392","Value":0.0096558},
         "KWD":{"CurrencyCode":"414","Value":4.1485235},
-        "USD":{"CurrencyCode":"840","Value":1.2702779}        
+        "USD":{"CurrencyCode":"840","Value":1.2702779}
       },
       "USD": {
         "CHF": {"CurrencyCode":"756", "Value":1.0372684},
