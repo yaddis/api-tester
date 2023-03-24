@@ -2,7 +2,7 @@
   "name": "node_rdp",
   "version": "2.0.0",
   "description": "rdp api client",
-  "main": "node index.js",
+  "main": "index.js",
   "dependencies": {
     "base-64": "^0.1.0",
     "dotenv": "^10.0.0",
