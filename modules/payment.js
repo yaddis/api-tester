@@ -102,12 +102,12 @@ module.exports = {
 
     const hostname = req.hostname;
 
-    let xrl = req.protocol + '://' + req.get('host')
+    let xrl = req.protocol +'s'+ '://' + req.headers.host
     
     if(is.not.existy(req.body.notify_url)) {
       req.body.notify_url = xrl+"/payment_notif"
     }
-    
+
     if(is.not.existy(req.body.redirect_url)) {
       req.body.redirect_url = xrl+"/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key +"&env="+req.body.env
       if (hostname.includes('localhost')) { 
