@@ -11,8 +11,8 @@ const config     = require('./credential.config');
 const app        = express()
 const port       = process.env.PORT || 8000;
 
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -232,7 +232,7 @@ app.post('/token_redirect', function (req, res) {
 // Transaction status
 app.post('/check_status', function (req, res) {
   console.log("")
-  console.log("TOKEN REDIRECTION HANDLING")
+  console.log("Check Status")
   console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
   data = {};
   data.request_mid    = req.body.request_mid
@@ -240,10 +240,11 @@ app.post('/check_status', function (req, res) {
   data.transaction_id = req.body.transaction_id
   data.signature      = signature.signGeneric(data.secret_key, data);
 
+  console.log(req.body)
   var request = require('request');
   request(
     {
-      url: "https://connect.reddotpayment.com/instanpanel/api/enquiry",
+      url: "https://44.225.25.223/instanpanel-andar/api/enquiry",
       method : 'POST',
       json   : data
     },
