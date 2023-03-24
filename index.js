@@ -238,7 +238,8 @@ app.post('/check_status', function (req, res) {
   data.transaction_id = req.body.transaction_id
   data.signature      = signature.signGeneric(data.secret_key, data);
 
-  console.log(req.body)
+  delete data['secret_key'];
+  console.log(data)
   var request = require('request');
   request(
     {
