@@ -99,7 +99,6 @@ module.exports = {
     delete param['secret_key']
 
     var pre_signature = this.recursiveGenericArraySign(param)
-
     hash = sha512(pre_signature+secret_key)
     return hash
   },

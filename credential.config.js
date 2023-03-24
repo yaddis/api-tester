@@ -29,7 +29,8 @@ module.exports = {
         "ic_send": "https://connect.reddotpayment.com/instanpanel/api/instancollect/send",
         "ic_send_sms": "https://connect.reddotpayment.com/instanpanel/api/instancollect/send_sms",
         "ic_enquiry": "https://connect.reddotpayment.com/instanpanel/api/instancollect/enquiry",
-        "merchant_api": "https://connect.reddotpayment.com/instanpanel/api/payment"
+        "merchant_api": "https://connect.reddotpayment.com/instanpanel/api/payment",
+        "check_status_api": "https://connect.reddotpayment.com/instanpanel/api/enquiry",
       },
       "test": {
         "payment": "https://secure-dev.reddotpayment.com/service/payment-api",
@@ -42,7 +43,8 @@ module.exports = {
         "ic_enquiry": "https://test.reddotpayment.com/instanpanel/api/instancollect/enquiry",
         "ic_void": "https://test.reddotpayment.com/instanpanel/api/instancollect/void",
         "ic_refund": "https://test.reddotpayment.com/instanpanel/api/instancollect/refund",
-        "merchant_api": "https://test.reddotpayment.com/instanpanel/api/payment"
+        "merchant_api": "https://test.reddotpayment.com/instanpanel/api/payment",
+        "check_status_api": "https://connect.reddotpayment.com/instanpanel/api/enquiry",
       },
       "staging": {
         "payment": "https://service2-dev.reddotpayment.com/service/payment-api",

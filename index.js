@@ -106,7 +106,6 @@ app.get('/payment_redirect', function (req, res) {
   f().then((val) => {
     res.send(val)
     // console.log("Pak Yaddi", val)
-    // helper.logger('logger/', 'logger/'+val.response.order_id+'.txt', JSON.stringify(val.response, '\n', 2) ) 
   })
 })
 
@@ -243,7 +242,7 @@ app.post('/check_status', function (req, res) {
   var request = require('request');
   request(
     {
-      url: "https://44.225.25.223/instanpanel-andar/api/enquiry",
+      url: api_url.check_status_api,
       method : 'POST',
       json   : data
     },
@@ -301,9 +300,6 @@ app.post('/merchant', function(req, res, next) {
         if (err) {
           return console.error('upload failed:', err);
         }
-        helper.logger('logger/', 'logger/'+req.body.order_number+'.txt', JSON.stringify({"request":req.body, "response":JSON.parse(body)}, '\n', 2) ) 
-        helper.logger('logger/', 'logger/'+req.body.order_number+'.txt', JSON.stringify(req.body, '\n', 2) ) 
-        helper.logger('logger/', 'logger/'+req.body.order_number+'.txt', JSON.stringify(JSON.parse(body), '\n', 2) ) 
         slack.merchantApi_notif({"request":req.body, "response":JSON.parse(body)})
         // should be redirect the app.get('/redirected', ...)
         res.send({"request":req.body, "response":JSON.parse(body)})
