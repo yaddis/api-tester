@@ -11,9 +11,6 @@ const config     = require('./credential.config');
 const app        = express()
 const port       = process.env.PORT || 8000;
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
@@ -42,6 +39,8 @@ app.get('/', function (req, res) {
  */
 app.post('/payment', function (req, res) {
 
+  console.log('hostname',req.protocol)
+  console.log('hostname',req.protocol + '://' + req.get('host'))
   console.log("")
   console.log("****************** PAYMENTS ******************")
   console.log("********** " +moment().format('YYYY-MM-DD, HH:mm:ss.SSS')+ " **********")
