@@ -88,38 +88,29 @@ module.exports = {
     return randomString
   },
 
-  randomNumber: function(currency, floatingDigit = true) {
+  randomNumber: function(currency, floatingDigit = 2) {
 
     min = 1;
-    max = '0';
-    decimalDigit = 3;
+    max = 30
+
     x = max.length
     if (currency == 'IDR') {
       min = 5000
-      decimalDigit = 5
-      floatingDigit = false
+      max = 1000000
+      floatingDigit = 0
     }
 
     if (currency == 'JPY') {
-      floatingDigit = false
+      min = 55
+      max = 10000
+      floatingDigit = 0
     }
-    // console.log("max", max)
 
-    while (decimalDigit >= x) {
-      max = max + 9;
-      x++
-    }
-    
-    max = parseInt(max)
-    console.log("max", max)
+    console.log("min, max", min, max)
+    const randomAmount = (Math.random() * (max - min) + min).toFixed(floatingDigit);
+    console.log(randomAmount);
 
-    decimal = this.getRandomInt(min, max)
-    floating = 0;
-    if(floatingDigit) {
-      floating = this.getRandomInt(min, 99)/100
-    }
-    
-    return decimal+floating
+    return randomAmount
   },
 
   getRandomInt: function(min, max) {
