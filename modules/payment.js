@@ -12,16 +12,16 @@ module.exports = {
 
     const hostname = 'http://localhost';
     if(is.not.existy(payload.notify_url)) {
-      payload.notify_url = "https://rdp-act.up.railway.app/payment_notif"
+      payload.notify_url = "https://rdp-act.cyclic.app/payment_notif"
     }
     if(is.not.existy(payload.redirect_url)) {
-      payload.redirect_url = "https://rdp-act.up.railway.app/payment_redirect?request_mid=" + payload.mid + "&secret_key=" + payload.secret_key + "&env="+ payload.env
+      payload.redirect_url = "https://rdp-act.cyclic.app/payment_redirect?request_mid=" + payload.mid + "&secret_key=" + payload.secret_key + "&env="+ payload.env
       // if (hostname.includes('localhost')) { 
       //   payload.redirect_url = "http://localhost:8000/payment_redirect?request_mid=" + payload.mid + "&secret_key=" + payload.secret_key
       // } 
     }
     if(is.not.existy(payload.back_url)) {
-      payload.back_url = "https://rdp-act.up.railway.app/back"
+      payload.back_url = "https://rdp-act.cyclic.app/back"
       if (hostname.includes('localhost')) { 
         payload.back_url = "http://localhost:8000/back"
       } 
@@ -108,6 +108,11 @@ module.exports = {
       req.body.notify_url = xrl+"/payment_notif"
     }
 
+    if (hostname.includes('localhost')) { 
+      req.body.notify_url = "https://rdp-act.cyclic.app/payment_notif"
+    } 
+
+
     if(is.not.existy(req.body.redirect_url)) {
       req.body.redirect_url = xrl+"/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key +"&env="+req.body.env
       if (hostname.includes('localhost')) { 
@@ -128,9 +133,13 @@ module.exports = {
     if(is.existy(req.body.card)){
       card = JSON.parse(req.body.card)
       req.body.card_no = card.card_no
-      req.body.cvv2 = card.cvv
+      if(is.not.existy(req.body.cvv2)) {
+        req.body.cvv2 = card.cvv
+      }
       req.body.exp_date = card.exp_month + card.exp_year
+      req.body.merchant_reference = card.case
     }
+
 
     full_stop = false;
     full_stop_reason = [];

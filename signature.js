@@ -53,6 +53,7 @@ module.exports = {
     var pre_signature = data.mid.trim() + data.order_id.trim() + data.payment_type + data.amount + data.ccy;
 
     var cvv_1 = ""
+    var exp_date = ""
     if (is.existy(data.payer_id)) {
       pre_signature += data.payer_id
     }
@@ -62,10 +63,14 @@ module.exports = {
         cvv_1 = data.cvv2.slice(-1)
       }
 
+      if (is.existy(data.exp_date)) {
+        exp_date = data.exp_date
+      }
+
       if (is.existy(data.payer_id)) {
         pre_signature += cvv_1
       } else {
-        pre_signature += data.card_no.slice(0, 6) + data.card_no.slice(-4) + data.exp_date + cvv_1
+        pre_signature += data.card_no.slice(0, 6) + data.card_no.slice(-4) + exp_date + cvv_1
       }
     }
 

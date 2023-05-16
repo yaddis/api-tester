@@ -10,17 +10,16 @@ const _          = require('underscore')
 const config     = require('./credential.config');
 const app        = express()
 const port       = process.env.PORT || 8000;
+const mid_config = require('./config/mid')
+const test_cases = require('./config/test_cases')
+const slack      = require('./modules/slack');
+const httprequest = require('./modules/httprequest');
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-var credential = config.get()
-var env = 'test'
-var api_url    = config.urls(env)
-
-var slack = require('./modules/slack');
-const { exit } = require('yargs');
-const httprequest = require('./modules/httprequest');
+var env     = 'test'
+var api_url = config.urls(env)
 
 app.get('/', function (req, res) {
 
@@ -62,7 +61,7 @@ app.post('/payment', function (req, res) {
       var result = await payment.processing(req, api_url);
       console.log(result)
       // slack.webhook_paymenturl(result) 
-      if(req.body.api_mode == 'direct_n3d') {
+      if(req.body.api_mode == 'direct_n3d' && is.not.existy(req.body.notify_url)) {
         slack.webhook_notif(result.response)
       }
       res.send(result)
@@ -85,8 +84,8 @@ app.get('/payment_redirect', function (req, res) {
   console.log("PAYMENTS REDIRECTION HANDLING")
   console.log(moment().format('YYYY-MM-DD, HH:mm:ss.SSS'))
 
-  if (is.existy(req.body.env)) {
-    api_url = config.urls(req.body.env)
+  if (is.existy(req.query.env)) {
+    api_url = config.urls(req.query.env)
   } else {
     api_url = config.urls('test')
   }
@@ -239,11 +238,19 @@ app.post('/check_status', function (req, res) {
   data.signature      = signature.signGeneric(data.secret_key, data);
 
   delete data['secret_key'];
-  console.log(data)
+
+  if(is.existy(req.body.endpoint)) {
+    api_url = req.body.endpoint
+  }
+  else {
+    urls = config.urls(req.body.env)
+    api_url = urls.check_status_api
+  }
+
   var request = require('request');
   request(
     {
-      url: api_url.check_status_api,
+      url: api_url,
       method : 'POST',
       json   : data
     },
@@ -523,6 +530,7 @@ app.post('/invoice/inquiry', function (req, res) {
 
   delete req.body['secret_key']
   console.log(req.body)
+  console.log(api_url.ic_enquiry)
 
   var request = require('request');
   request(
@@ -646,7 +654,7 @@ app.post('/invoice_notif', function(req,res) {
 
   request(
     {
-      url: "https://hooks.slack.com/services/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",
+      url: process.env.SLACK_URL,
       method: 'POST',
       json:true,
       form: {payload: '{"text":'+JSON.stringify(JSON.stringify(req.body))+'}'}
