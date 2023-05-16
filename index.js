@@ -10,8 +10,8 @@ const _          = require('underscore')
 const config     = require('./credential.config');
 const app        = express()
 const port       = process.env.PORT || 8000;
-const mid_config = require('./config/mid')
-const test_cases = require('./config/test_cases')
+// const mid_config = require('./config/mid')
+// const test_cases = require('./config/test_cases')
 const slack      = require('./modules/slack');
 const httprequest = require('./modules/httprequest');
 
