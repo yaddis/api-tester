@@ -260,7 +260,7 @@ app.post('/check_status', function (req, res) {
       }
       // should be redirect the app.get('/redirected', ...)
 
-      res.send(body)
+      res.send({"response":body, "request":data})
     }
   );
 })
