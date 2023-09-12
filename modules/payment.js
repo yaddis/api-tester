@@ -114,9 +114,9 @@ module.exports = {
 
 
     if(is.not.existy(req.body.redirect_url)) {
-      req.body.redirect_url = xrl+"/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key +"&env="+req.body.env
+      req.body.redirect_url = xrl+"/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
       if (hostname.includes('localhost')) { 
-        req.body.redirect_url = "http://localhost:8000/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key + "&env="+ req.body.env
+        req.body.redirect_url = "http://localhost:8000/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
       } 
     }
     if(is.not.existy(req.body.back_url)) {
@@ -238,11 +238,11 @@ module.exports = {
   },
 
   paymentstring: function (req, api_url) {
-    if(is.not.url(req.body.notify_url)) {
-      req.body.back_url = "https://rdp-act.up.railway.app/notif"
+    if(is.not.existy(req.body.notify_url)) {
+      req.body.notify_url = "https://rdp-act.cyclic.app/payment_notif"
     }
-    req.body.redirect_url = "https://rdp-act.up.railway.app/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key +"&env="+req.body.env
-    req.body.back_url = "https://rdp-act.up.railway.app/back"
+    req.body.redirect_url = "https://rdp-act.cyclic.app/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
+    req.body.back_url = "https://rdp-act.cyclic.app/back"
     if (req.body.api_mode == 'direct_n3d' || req.body.api_mode == 'direct_3d') {
       delete req.body['back_url']
       delete req.body['redirect_url']

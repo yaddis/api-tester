@@ -20,9 +20,6 @@ module.exports = {
   },
 
   json: function (data, api_url) {
-
-    // request()
-
     console.log(data)
     return new Promise((resolve, reject) => {
       console.log('ded',api_url)
