@@ -79,22 +79,26 @@ app.post('/payment', function (req, res) {
 /**
  * Process the inquiry during payment redirection
  */
-app.get('/payment_redirect', function (req, res) {
+app.get('/payment_redirect/:secret', function (req, res) {
   console.log("")
   console.log("PAYMENTS REDIRECTION HANDLING")
   console.log(moment().format('YYYY-MM-DD, HH:mm:ss.SSS'))
-
+  
+  credenial= Buffer.from(req.params.secret, 'base64').toString('ascii')
+  data = JSON.parse(credenial)
+  data.transaction_id = req.query.transaction_id
+  
   if (is.existy(req.query.env)) {
-    api_url = config.urls(req.query.env)
+    data['api_url'] = config.urls(req.query.env)
   } else {
-    api_url = config.urls('test')
+    data['api_url'] = config.urls('test')
   }
 
   var payment = require('./modules/payment')
 
   async function f() {
     try {
-      var result = await payment.redirect(req, api_url);
+      var result = await payment.redirect(req, data);
       res.send(result)
     } catch (error) {
       console.log(error)
@@ -113,17 +117,18 @@ app.post('/payment_redirect', function (req, res) {
   console.log("PAYMENTS REDIRECTION HANDLING")
   console.log(moment().format('YYYY-MM-DD, HH:mm:ss.SSS'))
 
+  data = {}
   if (is.existy(req.body.env)) {
-    api_url = config.urls(req.body.env)
+    data['api_url'] = config.urls(req.body.env)
   } else {
-    api_url = config.urls('test')
+    data['api_url'] = config.urls('test')
   }
 
   var payment = require('./modules/payment')
 
   async function f() {
     try {
-      var result = await payment.redirect(req, api_url);
+      var result = await payment.redirect(req, data);
       res.send(result)
     } catch (error) {
       console.log(error)
@@ -149,17 +154,15 @@ app.post('/token', function (req, res, next) {
     api_url = urls.token
   }
 
-  // res.send(api_url)
-
   token = require('./modules/token')
   async function f() {
     try {
       var result = await token.processing(req, api_url);
-      console.log(result)
+      // console.log(result)
       slack.webhook_paymenturl(result)
       res.send(result)
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       res.send(error);
     }
   }

@@ -15,10 +15,15 @@ module.exports = {
       payload.notify_url = "https://rdp-act.cyclic.app/payment_notif"
     }
     if(is.not.existy(payload.redirect_url)) {
-      payload.redirect_url = "https://rdp-act.cyclic.app/payment_redirect?request_mid=" + payload.mid + "&secret_key=" + payload.secret_key + "&env="+ payload.env
-      // if (hostname.includes('localhost')) { 
-      //   payload.redirect_url = "http://localhost:8000/payment_redirect?request_mid=" + payload.mid + "&secret_key=" + payload.secret_key
-      // } 
+      suffix = {"request_mid":req.body.mid,"secret_key":req.body.secret_key,"env":req.body.env}
+      console.log(suffix)
+
+      suffix_encoded = Buffer.from(JSON.stringify(suffix)).toString('base64')
+
+      payload.redirect_url = "https://rdp-act.cyclic.app/payment_redirect/"+suffix_encoded
+      if (hostname.includes('localhost')) {
+        payload.redirect_url = "http://localhost:8000/payment_redirect/"+suffix_encoded
+      }
     }
     if(is.not.existy(payload.back_url)) {
       payload.back_url = "https://rdp-act.cyclic.app/back"
@@ -112,11 +117,15 @@ module.exports = {
       req.body.notify_url = "https://rdp-act.cyclic.app/payment_notif"
     } 
 
-
     if(is.not.existy(req.body.redirect_url)) {
-      req.body.redirect_url = xrl+"/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
+      suffix = {"request_mid":req.body.mid,"secret_key":req.body.secret_key,"env":req.body.env}
+      console.log(suffix)
+
+      suffix_encoded = Buffer.from(JSON.stringify(suffix)).toString('base64')
+      
+      req.body.redirect_url = xrl+"/payment_redirect/"+suffix_encoded
       if (hostname.includes('localhost')) { 
-        req.body.redirect_url = "http://localhost:8000/payment_redirect?request_mid=" + req.body.mid + "&secret_key=" + req.body.secret_key
+        req.body.redirect_url = "http://localhost:8000/payment_redirect/"+suffix_encoded
       } 
     }
     if(is.not.existy(req.body.back_url)) {
@@ -182,45 +191,47 @@ module.exports = {
     delete req.body['endpoint']
     delete req.body['card']
     
-    request_option = {
-      url: api_url,
-      method: 'POST',
-      json: req.body
-    }
+    return  (req.body)
+    
+    // request_option = {
+    //   url: api_url,
+    //   method: 'POST',
+    //   json: req.body
+    // }
 
-    // gc_logger.request_payment(req.body);
-    return new Promise((resolve, reject)=> {
-      reqprom(request_option)
-        .then((api_response) => {
-          // gc_logger.payment_url(api_response);
-          resolve({"response":api_response, "request":helper.ksort(req.body)})
-        })
-        .catch((error) => {
-          reject(error)
-        })
-    })
+    // // gc_logger.request_payment(req.body);
+    // return new Promise((resolve, reject)=> {
+    //   reqprom(request_option)
+    //     .then((api_response) => {
+    //       // gc_logger.payment_url(api_response);
+    //       resolve({"response":api_response, "request":helper.ksort(req.body)})
+    //     })
+    //     .catch((error) => {
+    //       reject(error)
+    //     })
+    // })
   },
   
-  redirect: function(req, api_url) {
-    var credential = config.get()  
+  redirect: function(req, data) {
 
+    api_url = data.api_url.payment_redirect
+    delete data['api_url']
     data = {};
-    console.log('Api URL', api_url.payment_redirect)
     data.request_mid = req.query.request_mid
     data.secret_key = req.query.secret_key
     data.transaction_id = req.query.transaction_id
-
+    
     if(req.method == 'POST') {
       data.request_mid = req.body['request_mid']
       data.secret_key = req.body['secret_key']
       data.transaction_id = req.body['transaction_id']
     }
-
+    
     data.signature = signature.signGeneric(data.secret_key, data);
 
     console.log(data)
     request_option  = {
-      url: api_url.payment_redirect,
+      url: api_url,
       method: 'POST',
       json: data
     }
@@ -229,7 +240,8 @@ module.exports = {
       reqprom(request_option)
       .then((api_response) => {
         // gc_logger.payment_response(api_response, 'redirection');
-        resolve({"request":data, "response":api_response})
+
+        resolve({"request":data, "response":api_response, "api_url": api_url})
         })
         .catch((error) => {
           reject(error)
