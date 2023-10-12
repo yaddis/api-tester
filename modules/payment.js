@@ -191,25 +191,23 @@ module.exports = {
     delete req.body['endpoint']
     delete req.body['card']
     
-    return  (req.body)
-    
-    // request_option = {
-    //   url: api_url,
-    //   method: 'POST',
-    //   json: req.body
-    // }
+    request_option = {
+      url: api_url,
+      method: 'POST',
+      json: req.body
+    }
 
-    // // gc_logger.request_payment(req.body);
-    // return new Promise((resolve, reject)=> {
-    //   reqprom(request_option)
-    //     .then((api_response) => {
-    //       // gc_logger.payment_url(api_response);
-    //       resolve({"response":api_response, "request":helper.ksort(req.body)})
-    //     })
-    //     .catch((error) => {
-    //       reject(error)
-    //     })
-    // })
+    // gc_logger.request_payment(req.body);
+    return new Promise((resolve, reject)=> {
+      reqprom(request_option)
+        .then((api_response) => {
+          // gc_logger.payment_url(api_response);
+          resolve({"response":api_response, "request":helper.ksort(req.body)})
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
   },
   
   redirect: function(req, data) {
