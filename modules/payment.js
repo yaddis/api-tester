@@ -214,12 +214,9 @@ module.exports = {
 
     api_url = data.api_url.payment_redirect
     delete data['api_url']
-    data = {};
-    data.request_mid = req.query.request_mid
-    data.secret_key = req.query.secret_key
-    data.transaction_id = req.query.transaction_id
     
     if(req.method == 'POST') {
+      data = {};
       data.request_mid = req.body['request_mid']
       data.secret_key = req.body['secret_key']
       data.transaction_id = req.body['transaction_id']
