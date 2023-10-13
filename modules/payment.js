@@ -149,7 +149,6 @@ module.exports = {
       req.body.merchant_reference = card.case
     }
 
-
     full_stop = false;
     full_stop_reason = [];
     if(is.not.existy(req.body.payer_id)) {
@@ -263,6 +262,10 @@ module.exports = {
 
     if(is.not.existy(req.body.amount)) {
       req.body.amount = helper.randomNumber(req.body.ccy)
+    }
+
+    if(is.existy(req.body.recurring_mod)){
+      req.body.recurring_amount = helper.randomNumber(req.body.ccy)
     }
 
     req.body.signature = signature.paymentSignature(req.body)
