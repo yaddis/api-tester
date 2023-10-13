@@ -139,6 +139,10 @@ module.exports = {
       delete req.body['redirect_url']
     }
 
+    if(is.existy(req.body.recurring_mod)){
+      req.body.recurring_amount = helper.randomNumber(req.body.ccy)
+    }
+
     if(is.existy(req.body.card)){
       card = JSON.parse(req.body.card)
       req.body.card_no = card.card_no
@@ -265,6 +269,7 @@ module.exports = {
     }
 
     if(is.existy(req.body.recurring_mod)){
+      console.log('recurring')
       req.body.recurring_amount = helper.randomNumber(req.body.ccy)
     }
 
