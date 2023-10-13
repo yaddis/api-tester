@@ -283,5 +283,5 @@ module.exports = {
     }
 
     return request_option;
-  },
+  }
 }
