@@ -88,8 +88,8 @@ app.get('/payment_redirect/:secret', function (req, res) {
   data = JSON.parse(credenial)
   data.transaction_id = req.query.transaction_id
   
-  if (is.existy(req.query.env)) {
-    data['api_url'] = config.urls(req.query.env)
+  if (is.existy(data.env)) {
+    data['api_url'] = config.urls(data.env)
   } else {
     data['api_url'] = config.urls('test')
   }
