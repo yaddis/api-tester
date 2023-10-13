@@ -44,7 +44,7 @@ module.exports = {
       // return 'GST' + this.randomString('timestamp')
     }
     else {
-      return 'RECURR' + this.randomString2(4)
+      return 'RECURR_' + this.randomString2(4)
     }
   },
 

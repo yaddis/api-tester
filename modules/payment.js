@@ -270,7 +270,9 @@ module.exports = {
 
     if(is.existy(req.body.recurring_mod)){
       console.log('recurring')
-      req.body.recurring_amount = helper.randomNumber(req.body.ccy)
+      if(is.not.existy(req.body.recurring_amount)){
+        req.body.recurring_amount = helper.randomNumber(req.body.ccy)
+      }
     }
 
     req.body.signature = signature.paymentSignature(req.body)
