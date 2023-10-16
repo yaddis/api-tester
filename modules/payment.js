@@ -140,7 +140,10 @@ module.exports = {
     }
 
     if(is.existy(req.body.recurring_mod)){
-      req.body.recurring_amount = helper.randomNumber(req.body.ccy)
+      console.log('recurring')
+      if(is.not.existy(req.body.recurring_amount)){
+        req.body.recurring_amount = helper.randomNumber(req.body.ccy)
+      }
     }
 
     if(is.existy(req.body.card)){
