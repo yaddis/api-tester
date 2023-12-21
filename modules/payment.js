@@ -4,6 +4,7 @@ const reqprom     = require('request-promise');
 const is          = require('is_js')
 const config      = require('../credential.config');
 const { exit }    = require('yargs');
+const { min } = require('underscore');
 // const gc_logger   = require('./gc_logger')
 
 module.exports = {
@@ -107,6 +108,11 @@ module.exports = {
 
     const hostname = req.hostname;
 
+    range = {min: 300, max: 1500}
+    if(req.body.env == 'prod') {
+      range = {min: 0.1, max: 1.5}
+    }
+
     let xrl = req.protocol +'s'+ '://' + req.headers.host
     
     if(is.not.existy(req.body.notify_url)) {
@@ -115,7 +121,7 @@ module.exports = {
 
     if (hostname.includes('localhost')) { 
       req.body.notify_url = "https://rdp-act.cyclic.app/payment_notif"
-    } 
+    }
 
     if(is.not.existy(req.body.redirect_url)) {
       suffix = {"request_mid":req.body.mid,"secret_key":req.body.secret_key,"env":req.body.env}
@@ -141,8 +147,10 @@ module.exports = {
 
     if(is.existy(req.body.recurring_mod)){
       console.log('recurring')
-      if(is.not.existy(req.body.recurring_amount)){
-        req.body.recurring_amount = helper.randomNumber(req.body.ccy)
+      if(req.body.recurring_mod == '1') {
+        if(is.not.existy(req.body.recurring_amount)){
+          req.body.recurring_amount = helper.randomNumber(req.body.ccy)
+        }
       }
     }
 
@@ -180,7 +188,7 @@ module.exports = {
     }
     
     if(is.not.existy(req.body.amount)) {
-      req.body.amount = helper.randomNumber(req.body.ccy)
+      req.body.amount = helper.randomNumber(req.body.ccy, range)
     }
 
     if(full_stop) {
