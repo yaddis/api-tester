@@ -88,11 +88,12 @@ module.exports = {
     return randomString
   },
 
-  randomNumber: function(currency, floatingDigit = 2) {
+  randomNumber: function(currency, range) {
 
-    min = 1;
-    max = 30
-
+    min = range.min;
+    max = range.max;
+    
+    floatingDigit = 2
     x = max.length
     if (currency == 'IDR') {
       min = 5000
