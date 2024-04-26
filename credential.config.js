@@ -62,12 +62,12 @@ module.exports = {
         "payment_redirect": "https://secure-dev.reddotpayment.com/service/Merchant_processor/query_redirection",
         "token": "https://secure-dev.reddotpayment.com/service-nanda/token-api",
         "token_redirect": "https://secure-dev.reddotpayment.com/service-nanda/Merchant_processor/query_token_redirection",
-        "ic_save": "https://44.225.25.223/instanpanel-nanda/api/instancollect/save",
-        "ic_send": "https://44.225.25.223/instanpanel-nanda/api/instancollect/send",
-        "ic_send_sms": "https://44.225.25.223/instanpanel-nanda/api/instancollect/send_sms",
-        "ic_enquiry": "https://44.225.25.223/instanpanel-nanda/api/instancollect/enquiry",
-        "merchant_api": "https://44.225.25.223/instanpanel-nanda/api/payment",
-        "check_status_api": "https://test.reddotpayment.com/instanpanel/api/enquiry"
+        "ic_save": "https://test.reddotpayment.com/instanpanel-nanda/api/instancollect/save",
+        "ic_send": "https://test.reddotpayment.com/instanpanel-nanda/api/instancollect/send",
+        "ic_send_sms": "https://test.reddotpayment.com/instanpanel-nanda/api/instancollect/send_sms",
+        "ic_enquiry": "https://test.reddotpayment.com/instanpanel-nanda/api/instancollect/enquiry",
+        "merchant_api": "https://test.reddotpayment.com/instanpanel-nanda/api/payment",
+        "check_status_api": "https://test.reddotpayment.com/instanpanel-nanda/api/enquiry"
       },
       "yoas": {
         "payment": "https://secure-dev.reddotpayment.com/service-yoas/payment-api",

@@ -14,6 +14,7 @@ const port       = process.env.PORT || 8000;
 // const test_cases = require('./config/test_cases')
 const slack      = require('./modules/slack');
 const httprequest = require('./modules/httprequest');
+const payment = require('./modules/payment');
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -23,9 +24,11 @@ var api_url = config.urls(env)
 
 app.get('/', function (req, res) {
 
-  if (is.existy(req.body.env)) {
-    api_url = config.urls(req.body.env)
-  }
+  // httprequest.generate_payment_url();
+
+  // if (is.existy(req.body.env)) {
+  //   api_url = config.urls(req.body.env)
+  // }
 
   response = 'Please check <a href="https://reddotpayment.atlassian.net/wiki/spaces/ID/pages/1218379777/Testing+tools">this page</a> for complete documentation';
 
@@ -263,7 +266,7 @@ app.post('/check_status', function (req, res) {
       }
       // should be redirect the app.get('/redirected', ...)
 
-      res.send({"response":body, "request":data})
+      res.send({"end_point":api_url, "response":body, "request":data})
     }
   );
 })
@@ -311,9 +314,9 @@ app.post('/merchant', function(req, res, next) {
         if (err) {
           return console.error('upload failed:', err);
         }
-        slack.merchantApi_notif({"request":req.body, "response":JSON.parse(body)})
+        slack.merchantApi_notif({"endpoint":api_url,"request":req.body, "response":JSON.parse(body)})
         // should be redirect the app.get('/redirected', ...)
-        res.send({"request":req.body, "response":JSON.parse(body)})
+        res.send({"endpoint":api_url, "request":req.body, "response":JSON.parse(body)})
       }
     );
   } catch (error) {
@@ -444,7 +447,7 @@ app.post('/invoice/create', function (req, res, next) {
     try {
       var result = await invoice.create(req, api_url);
       console.log(result)
-      slack.integration_webhook(result)
+      // slack.webhook(result)
       res.send(result)
     } catch (error) {
       console.log(error)
