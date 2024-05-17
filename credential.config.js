@@ -59,7 +59,7 @@ module.exports = {
       },
       "nanda": {
         "payment": "https://secure-dev.reddotpayment.com/service-nanda/payment-api",
-        "payment_redirect": "https://secure-dev.reddotpayment.com/service/Merchant_processor/query_redirection",
+        "payment_redirect": "https://secure-dev.reddotpayment.com/service-nanda/Merchant_processor/query_redirection",
         "token": "https://secure-dev.reddotpayment.com/service-nanda/token-api",
         "token_redirect": "https://secure-dev.reddotpayment.com/service-nanda/Merchant_processor/query_token_redirection",
         "ic_save": "https://test.reddotpayment.com/instanpanel-nanda/api/instancollect/save",
