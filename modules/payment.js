@@ -145,11 +145,9 @@ module.exports = {
 
     if(is.existy(req.body.recurring_mod)){
       console.log('recurring')
-      if(req.body.recurring_mod == '1') {
-        if(is.not.existy(req.body.recurring_amount)){
-          req.body.recurring_amount = helper.randomNumber(req.body.ccy)
-        }
-      }
+      // if(is.not.existy(req.body.recurring_amount)){
+      //   req.body.recurring_amount = helper.randomNumber(req.body.ccy)
+      // }
     }
 
     if(is.existy(req.body.card)){
@@ -213,7 +211,7 @@ module.exports = {
       reqprom(request_option)
         .then((api_response) => {
           // gc_logger.payment_url(api_response);
-          resolve({"api_url": api_url,"response":api_response, "request":helper.ksort(req.body)})
+          resolve({"end_point":api_url, "response":api_response, "request":helper.ksort(req.body)})
         })
         .catch((error) => {
           reject(error)
@@ -275,9 +273,9 @@ module.exports = {
 
     if(is.existy(req.body.recurring_mod)){
       console.log('recurring')
-      if(is.not.existy(req.body.recurring_amount)){
-        req.body.recurring_amount = helper.randomNumber(req.body.ccy)
-      }
+      // if(is.not.existy(req.body.recurring_amount)){
+      //   req.body.recurring_amount = helper.randomNumber(req.body.ccy)
+      // }
     }
 
     req.body.signature = signature.paymentSignature(req.body)

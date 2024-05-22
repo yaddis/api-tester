@@ -17,9 +17,10 @@ module.exports = {
     data.secret_key = req.body.secret_key
 
     data.created_date = moment().format('YYYY-MM-DD HH:mm:ss')
-    data.invoice_number = helper.randomString()
+    order_id = helper.randomString()
+    data.invoice_number = 'Invoice_'+order_id
     // data.expiry_datetime = moment().add(3, 'hours').format('YYYY-MM-DD HH:mm:ss')
-    data.subject = 'Invoice_' + data.invoice_number
+    data.subject = 'Invoice_' + order_id
     delete data['env']
     delete data['itemcount']
     data.signature = signature.generateSignatureInstantCollect(data)
