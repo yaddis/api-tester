@@ -14,6 +14,7 @@ const port       = process.env.PORT || 8000;
 // const test_cases = require('./config/test_cases')
 const slack      = require('./modules/slack');
 const httprequest = require('./modules/httprequest');
+const { help } = require('yargs');
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -38,11 +39,12 @@ app.get('/', function (req, res) {
  */
 app.post('/payment', function (req, res) {
 
-  console.log('hostname',req.protocol)
-  console.log('hostname',req.protocol + '://' + req.get('host'))
-  console.log("")
-  console.log("****************** PAYMENTS ******************")
   console.log("********** " +moment().format('YYYY-MM-DD, HH:mm:ss.SSS')+ " **********")
+  if(req.body.payment_type == 'S') {
+    helper.logSales()
+  } else {
+    helper.logAuth()
+  }
 
   if(is.existy(req.body.endpoint)) {
     api_url = req.body.endpoint
@@ -52,7 +54,7 @@ app.post('/payment', function (req, res) {
     api_url = urls.payment
   }
 
-  console.log('api_url',api_url)
+  console.log('api_url:',api_url)
 
   var payment = require('./modules/payment')
 
@@ -88,17 +90,20 @@ app.get('/payment_redirect/:secret', function (req, res) {
   data = JSON.parse(credenial)
   data.transaction_id = req.query.transaction_id
   
-  if (is.existy(data.env)) {
-    data['api_url'] = config.urls(data.env)
+  if (is.existy(req.query.env)) {
+    urls = config.urls(req.query.env)
+    api_url = urls.payment_redirect
   } else {
-    data['api_url'] = config.urls('test')
+    urls = config.urls('test')
+    api_url = urls.payment_redirect
   }
 
+  helper.logPaymentRedirect();
   var payment = require('./modules/payment')
 
   async function f() {
     try {
-      var result = await payment.redirect(req, data);
+      var result = await payment.redirect(req, api_url);
       res.send(result)
     } catch (error) {
       console.log(error)
@@ -107,7 +112,7 @@ app.get('/payment_redirect/:secret', function (req, res) {
   }
 
   f().then((val) => {
-    res.send(val)
+    // res.send(val)
     // console.log("Pak Yaddi", val)
   })
 })
@@ -119,16 +124,23 @@ app.post('/payment_redirect', function (req, res) {
 
   data = {}
   if (is.existy(req.body.env)) {
-    data['api_url'] = config.urls(req.body.env)
+    urls = config.urls(req.body.env)
+    api_url = urls.payment_redirect
   } else {
-    data['api_url'] = config.urls('test')
+    urls = config.urls('test')
+    api_url = urls.payment_redirect
   }
 
+  if(is.existy(req.body.endpoint)) {
+    api_url = req.body.endpoint
+  }
+
+  console.log(data)
   var payment = require('./modules/payment')
 
   async function f() {
     try {
-      var result = await payment.redirect(req, data);
+      var result = await payment.redirect(req, api_url);
       res.send(result)
     } catch (error) {
       console.log(error)
@@ -282,12 +294,16 @@ app.post('/merchant', function(req, res, next) {
     api_url = urls.merchant_api
   }
 
+  console.log(api_url)
   switch(req.body.action_type) {
     case "capture": console.log("************** MERCHANT - CAPTURE **************")
+    helper.logCapture()
     break;
     case "refund": console.log("*************** MERCHANT - REFUND **************")
+    helper.logRefund()
     break;
     default: console.log("**************** MERCHANT - VOID ***************")
+    helper.logVoid()
   }
   console.log("*********** " +moment().format('YYYY-MM-DD, HH:mm:ss.SSS')+ " ***********")
 
@@ -901,4 +917,9 @@ app.post('/bulk/refund', function(req, res){
 
 })
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(
+  port, () => {
+    console.log(`Example app listening on port ${port}!`)
+    console.log(helper.initApp())
+  }
+)

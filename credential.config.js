@@ -126,7 +126,7 @@ module.exports = {
         "ic_send": "https://44.225.25.223/instanpanel-kamal/test/api/instancollect/send",
         "ic_send_sms": "https://44.225.25.223/instanpanel-kamal/test/api/instancollect/send_sms",
         "ic_enquiry": "https://44.225.25.223/instanpanel-kamal/test/api/instancollect/enquiry",
-        "merchant_api": "https://44.225.25.223/instapanel-kamal/api/payment"
+        "merchant_api": "https://test.reddotpayment.com/instanpanel-k/api/payment"
       },
       "andar": {
         "payment": "https://secure-dev.reddotpayment.com/service-andar/payment-api",

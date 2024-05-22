@@ -8,7 +8,8 @@ var slack_var = {
   "client_secret": "81a7f3efd80471ec837aa887c6ea81ca",
   "signing_secret": "69d094a1143ba6249fe87080ea62ba08",
   "verification_token":"d599b9Q3uTQU6ty7SDT3Vv54",
-  "webhook":process.env.SLACK_WEBHOOK
+  "webhook":"https://hooks.slack.com/services/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"
+  // "webhook":process.env.SLACK_URL
 }
 
 module.exports = {
@@ -139,7 +140,7 @@ module.exports = {
     }
   
     request_option  = {
-      url: slack_var.webhook,      
+      url: slack_var.webhook,
       method: 'POST',
       json: message
     }

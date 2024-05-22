@@ -108,7 +108,7 @@ module.exports = {
 
     const hostname = req.hostname;
 
-    range = {min: 300, max: 1500}
+    range = {min: 5, max: 50}
     if(req.body.env == 'prod') {
       range = {min: 0.1, max: 1.5}
     }
@@ -125,8 +125,6 @@ module.exports = {
 
     if(is.not.existy(req.body.redirect_url)) {
       suffix = {"request_mid":req.body.mid,"secret_key":req.body.secret_key,"env":req.body.env}
-      console.log(suffix)
-
       suffix_encoded = Buffer.from(JSON.stringify(suffix)).toString('base64')
       
       req.body.redirect_url = xrl+"/payment_redirect/"+suffix_encoded
@@ -155,6 +153,7 @@ module.exports = {
     }
 
     if(is.existy(req.body.card)){
+      console.log(re.body.card)
       card = JSON.parse(req.body.card)
       req.body.card_no = card.card_no
       if(is.not.existy(req.body.cvv2)) {
@@ -197,8 +196,6 @@ module.exports = {
       exit;
     }
 
-    console.log(req.body)
-
     req.body.signature = signature.paymentSignature(req.body)
     delete req.body['secret_key']
     delete req.body['env']
@@ -216,7 +213,7 @@ module.exports = {
       reqprom(request_option)
         .then((api_response) => {
           // gc_logger.payment_url(api_response);
-          resolve({"response":api_response, "request":helper.ksort(req.body)})
+          resolve({"api_url": api_url,"response":api_response, "request":helper.ksort(req.body)})
         })
         .catch((error) => {
           reject(error)
@@ -224,11 +221,8 @@ module.exports = {
     })
   },
   
-  redirect: function(req, data) {
+  redirect: function(req, api_url) {
 
-    api_url = data.api_url.payment_redirect
-    delete data['api_url']
-    
     if(req.method == 'POST') {
       data = {};
       data.request_mid = req.body['request_mid']

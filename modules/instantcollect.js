@@ -187,7 +187,7 @@ module.exports = {
     return {
       "description": "Item "+itemcount,
       "quantity": helper.getRandomInt(1,5),
-      "unit_price": helper.randomNumber("SGD")
+      "unit_price": helper.randomNumber("USD", {"min":20, "max":200})
     }
     
   }
